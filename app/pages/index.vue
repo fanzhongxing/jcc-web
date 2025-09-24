@@ -10,25 +10,25 @@ const router = useRouter()
 const ver = ref<string>(String(route.query.ver || ''))
 const page = ref(Math.max(1, Number(route.query.page ?? 1)))
 const size = ref(Math.max(1, Number(route.query.size ?? 9)))
-const q = ref<string>(String(route.query.q || ''))
-const searchInput = ref<string>(q.value)
+const name = ref<string>(String(route.query.anme || ''))
+const searchInput = ref<string>(name.value)
 
 watch(() => route.query, (qq) => {
   if ('ver' in qq) ver.value = String(qq.ver || '')
   if ('page' in qq) page.value = Math.max(1, Number(qq.page))
   if ('size' in qq) size.value = Math.max(1, Number(qq.size))
-  if ('q' in qq) { q.value = String(qq.q || ''); searchInput.value = q.value }
+  if ('name' in qq) { name.value = String(qq.q || ''); searchInput.value = name.value }
 })
 
 // 拉数据（按 ver + 分页 + 搜索）
 const { items, total, totalPages, error: lError, status: lStatus, refresh } =
-  useLineups(ver, page, size, q)
+  useLineups(ver, page, size, name)
 
 // 搜索（提交后写回 URL，触发刷新）
 function syncQuery() {
-  router.replace({ query: { ...route.query, ver: ver.value, page: String(page.value), size: String(size.value), q: q.value || undefined } })
+  router.replace({ query: { ...route.query, ver: ver.value, page: String(page.value), size: String(size.value), q: name.value || undefined } })
 }
-function applySearch() { q.value = searchInput.value; page.value = 1; syncQuery(); refresh() }
+function applySearch() { name.value = searchInput.value; page.value = 1; syncQuery(); refresh() }
 function clearSearch() { searchInput.value = ''; applySearch() }
 
 function onPageChange(p: number) { if (p < 1 || (totalPages.value && p > totalPages.value)) return; page.value = p; syncQuery(); refresh() }

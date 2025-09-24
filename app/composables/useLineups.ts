@@ -11,19 +11,19 @@ export function useLineups(
   versionCode: Ref<string>,
   page: Ref<number>,
   size: Ref<number>,
-  q: Ref<string>,                    // ✅ 新增搜索词
+  name: Ref<string>,                    
   opts?: { server?: boolean }
 ) {
   const api = useHttp()
   const { data, error, status, refresh } = useAsyncData(
-    () => `lineups:${versionCode.value}:${page.value}:${size.value}:${q.value || ''}`,   // ✅ key 加上 q
+    () => `lineups:${versionCode.value}:${page.value}:${size.value}:${name.value || ''}`,   
     async () => {
       const payload = await api<RawList>('/api/lineup/list', {
         params: {
           version: versionCode.value,
           page: page.value,
           size: size.value,
-          q: q.value || undefined          // ✅ 传给后端（按名称/标签搜索）
+          name: name.value || ""          
         }
       })
       const total = Number(payload?.total || 0)
@@ -33,7 +33,7 @@ export function useLineups(
         totalPages: Math.max(1, Math.ceil(total / size.value))
       } as ListResp
     },
-    { server: opts?.server ?? false, watch: [versionCode, page, size, q], immediate: true }
+    { server: opts?.server ?? false, watch: [versionCode, page, size, name], immediate: true }
   )
 
   const items = computed(() => data.value?.items ?? [])

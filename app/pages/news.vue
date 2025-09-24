@@ -18,7 +18,7 @@
       </template>
 
       <template v-else>
-        <NewsItem v-for="(n, i) in items" :key="i" :title="n.title" :date="n.time" :content="n.content" />
+        <NewsItem v-for="(n, i) in items" :key="i" :title="n.title" :date="n.date" :content="n.content" />
         <div v-if="!items.length" class="empty">暂无资讯</div>
       </template>
     </section>

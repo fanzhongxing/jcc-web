@@ -1,4 +1,4 @@
-type NewsItem = { id: number; title: string; time: string; content: string }
+type NewsItem = { id: number; title: string; date: string; content: string }
 type RawNewsList = { list: NewsItem[]; total: number }
 type NewsResp = {
   items: NewsItem[]; page: number; size: number; total: number; totalPages: number
