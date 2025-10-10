@@ -16,11 +16,11 @@
     </ul>
 
     <!-- 右：赛季下拉 -->
-    <div class="ver-switch">
-      <label class="ver-label" for="ver-select">版本</label>
-      <select id="ver-select" :value="ver" @change="onVerChange(($event.target as HTMLSelectElement).value)">
-        <option v-for="v in versions" :key="v.code" :value="v.code">
-          {{ v.label || v.code }}
+    <div class="season-switch">
+      <label class="season-label" for="season-select">版本</label>
+      <select id="season-select" :value="season" @change="onSeasonChange(($event.target as HTMLSelectElement).value)">
+        <option v-for="v in items" :key="v.id" :value="v.name">
+          {{ v.name }}
         </option>
       </select>
     </div>
@@ -28,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-import { useVersions } from '~/composables/useVersions'
+import { useSeasons } from '~/composables/useSeasons'
 
 type NavItem = { label: string; to: string }
 
@@ -48,44 +48,44 @@ const SEASON_EXTRA: Record<string, NavItem[]> = {
 }
 
 /** 拉赛季版本列表（你之前已经有这个 composable 了） */
-const { versions, latestActive } = useVersions()
+const { items, latestActive } = useSeasons()
 
 /* -------------------- A：同步赛季（URL <-> 下拉） -------------------- */
 
-/** 当前赛季：来自 URL 的 ?ver= */
-const ver = ref<string>(String(route.query.ver || ''))
+/** 当前赛季：来自 URL 的 ?season= */
+const season = ref<string>(String(route.query.season || ''))
 
-/** URL 改变时，同步到本地 ver（比如你在首页改变了 ?ver=） */
-watch(() => route.query.ver, (val) => {
-  ver.value = String(val || '')
+/** URL 改变时，同步到本地 season（比如你在首页改变了 ?season=） */
+watch(() => route.query.season, (val) => {
+  season.value = String(val || '')
 })
 
-/** 首次进入如果没有 ver，用“最新生效版本”填上，并回到第1页 */
+/** 首次进入如果没有 season，用“最新生效版本”填上，并回到第1页 */
 watchEffect(() => {
-  if (!ver.value && latestActive.value) {
-    ver.value = latestActive.value.code
-    router.replace({ query: { ...route.query, ver: ver.value, page: '1' } })
+  if (!season.value && latestActive.value) {
+    season.value = latestActive.value
+    router.replace({ query: { ...route.query, season: season.value } })
   }
 })
 
 /** 下拉切换赛季：写回 URL（保留其他 query，比如搜索词），并回到第1页 */
-function onVerChange(next: string) {
-  if (!next || next === ver.value) return
-  ver.value = next
-  router.push({ query: { ...route.query, ver: ver.value, page: '1' } })
+function onSeasonChange(next: string) {
+  if (!next || next === season.value) return
+  season.value = next
+  router.push({ query: { ...route.query, season: season.value } })
 }
 
 /* -------------------- B：根据赛季计算导航条目 -------------------- */
 
 const navItems = computed<NavItem[]>(() => {
-  // 前端常量版：按当前 ver 从映射里取附加菜单
-  const extra = SEASON_EXTRA[ver.value] || []
+  // 前端常量版：按当前 season 从映射里取附加菜单
+  const extra = SEASON_EXTRA[season.value] || []
   return [...BASE_ITEMS, ...extra]
 })
 
 /* 
 // 如果要走后端返回额外导航：
-import type { Version } from '~/composables/useVersions'
+import type { Version } from '~/composables/useSeason'
 const currentVersion = computed(() => versions.value.find(v => v.code === ver.value))
 const navItems = computed<NavItem[]>(() => [
   ...BASE_ITEMS,
@@ -155,19 +155,19 @@ const navItems = computed<NavItem[]>(() => [
 }
 
 /* 下拉样式：浅底深字，避免白字白底看不见选项 */
-.ver-switch {
+.season-switch {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.ver-label {
+.season-label {
   font-size: 12px;
   color: #fff;
   opacity: .9;
 }
 
-.ver-switch select {
+.season-switch select {
   appearance: none;
   border-radius: 8px;
   border: 1px solid #e2e8f0;
@@ -177,7 +177,7 @@ const navItems = computed<NavItem[]>(() => [
   cursor: pointer;
 }
 
-.ver-switch select option {
+.season-switch select option {
   color: #111827;
   background: #fff;
 }
