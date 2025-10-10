@@ -2,7 +2,7 @@
   <article class="card">
     <header class="head">
       <h2 class="title">{{ title }}</h2>
-      <time class="time" :datetime="iso">{{ displayTime }}</time>
+      <time class="time" :datetime="date">{{ date }}</time>
     </header>
 
     <!-- 折叠开关（默认折叠） -->
@@ -18,11 +18,9 @@
 <script setup lang="ts">
 const props = withDefaults(defineProps<{
   title: string
-  date: string | number | Date
+  date: string
   content: string
-  /** 是否可折叠；false 时始终展开 */
   collapsible?: boolean
-  /** 默认是否展开 */
   defaultOpen?: boolean
 }>(), {
   collapsible: true,
@@ -31,16 +29,9 @@ const props = withDefaults(defineProps<{
 
 const isOpen = ref(!!props.defaultOpen)
 
-const iso = computed(() => new Date(props.date).toISOString())
-const displayTime = computed(() =>
-  new Intl.DateTimeFormat('zh-CN', {
-    year: 'numeric', month: '2-digit', day: '2-digit',
-    hour: '2-digit', minute: '2-digit'
-  }).format(new Date(props.date))
-)
 
 // 可选：给 content 生成一个可关联 id（便于无障碍/跳转）
-const contentId = computed(() => `news-content-${hash(`${props.title}-${iso.value}`)}`)
+const contentId = computed(() => `news-content-${hash(`${props.title}-${props.date}`)}`)
 
 function hash(s: string) {
   let h = 0; for (let i = 0; i < s.length; i++) h = (h << 5) - h + s.charCodeAt(i) | 0;

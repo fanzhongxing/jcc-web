@@ -17,7 +17,7 @@
 
     <!-- 右：赛季下拉 -->
     <div class="season-switch">
-      <label class="season-label" for="season-select">版本</label>
+      <label class="season-label" for="season-select">赛季</label>
       <select id="season-select" :value="season" @change="onSeasonChange(($event.target as HTMLSelectElement).value)">
         <option v-for="v in items" :key="v.id" :value="v.name">
           {{ v.name }}
@@ -162,8 +162,8 @@ const navItems = computed<NavItem[]>(() => [
 }
 
 .season-label {
-  font-size: 12px;
-  color: #fff;
+  font-size: 13;
+  color: #000000;
   opacity: .9;
 }
 
