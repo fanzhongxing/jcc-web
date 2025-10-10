@@ -1,7 +1,7 @@
 <template>
   <div class="page">
     <h1 class="page-title">铲铲资讯</h1>
-    <p class="page-desc">同步更新《金铲铲之战》的更新公告</p>
+    <p class="page-desc">同步更新《金铲铲之战》的更新公告及资讯等</p>
 
     <!-- 顶部分页：按需开启 -->
     <Pagination v-if="showTopPager" :page="page" :size="size" :total-pages="totalPages" :total="total"

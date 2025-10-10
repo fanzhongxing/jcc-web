@@ -3,15 +3,15 @@
     <div class="thumb">
       <img :src="formationImage" :alt="name" loading="lazy" />
       <!-- 可选版本角标 -->
-      <div v-if="version" class="badge">{{ version }}</div>
+      <!-- <div v-if="version" class="badge">{{ version }}</div> -->
     </div>
 
     <header class="title">{{ name }}</header>
 
     <ul class="meta">
-      <li><span class="label">评级</span><span class="val">{{ rating }}</span></li>
-      <li><span class="label">难度</span><span class="val">{{ difficulty }}</span></li>
       <li><span class="label">版本</span><span class="val">{{ version }}</span></li>
+      <li><span class="label">上手</span><span class="val">{{ difficulty }}</span></li>
+      <!-- <li><span class="label">评级</span><span class="val">{{ rating }}</span></li> -->
     </ul>
 
     <!-- 可选统计区 -->
@@ -30,7 +30,7 @@
 <script setup lang="ts">
 const props = defineProps<{
   name: string
-  formationImage: string   // ✅ 改名
+  formationImage: string
   rating: string
   difficulty: string
   version: string
@@ -46,7 +46,7 @@ async function copyCode() {
     ta.value = props.code
     document.body.appendChild(ta)
     ta.select()
-    document.execCommand('copy')
+    await navigator.clipboard.writeText('copy');
     document.body.removeChild(ta)
   }
   copied.value = true

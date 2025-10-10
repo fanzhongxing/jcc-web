@@ -1,7 +1,9 @@
 <template>
   <nav class="navbar">
     <!-- 左：Logo -->
-    <NuxtLink to="/" class="logo-link">
+    <NuxtLink
+      to="https://www.douyin.com/user/MS4wLjABAAAA77VM1AnQqXnud0JVV08VDF53REhvyTgbhPjhHLiW1_0JEw4VxHr-gc5B3wmRDRnO?from_tab_name=main"
+      class="logo-link" target="_blank">
       <img src="/logo.png" alt="Logo" class="logo-img" />
       <span class="logo-text">金铲铲逸尘</span>
     </NuxtLink>

@@ -10,25 +10,25 @@ const router = useRouter()
 const ver = ref<string>(String(route.query.ver || ''))
 const page = ref(Math.max(1, Number(route.query.page ?? 1)))
 const size = ref(Math.max(1, Number(route.query.size ?? 9)))
-const name = ref<string>(String(route.query.anme || ''))
-const searchInput = ref<string>(name.value)
+const q = ref<string>(String(route.query.anme || ''))
+const searchInput = ref<string>(q.value)
 
 watch(() => route.query, (qq) => {
   if ('ver' in qq) ver.value = String(qq.ver || '')
   if ('page' in qq) page.value = Math.max(1, Number(qq.page))
   if ('size' in qq) size.value = Math.max(1, Number(qq.size))
-  if ('name' in qq) { name.value = String(qq.q || ''); searchInput.value = name.value }
+  if ('q' in qq) { q.value = String(qq.q || ''); searchInput.value = q.value }
 })
 
 // 拉数据（按 ver + 分页 + 搜索）
 const { items, total, totalPages, error: lError, status: lStatus, refresh } =
-  useLineups(ver, page, size, name)
+  useLineups(ver, page, size, q)
 
 // 搜索（提交后写回 URL，触发刷新）
 function syncQuery() {
-  router.replace({ query: { ...route.query, ver: ver.value, page: String(page.value), size: String(size.value), q: name.value || undefined } })
+  router.replace({ query: { ...route.query, ver: ver.value, page: String(page.value), size: String(size.value), q: q.value || undefined } })
 }
-function applySearch() { name.value = searchInput.value; page.value = 1; syncQuery(); refresh() }
+function applySearch() { q.value = searchInput.value; page.value = 1; syncQuery(); refresh() }
 function clearSearch() { searchInput.value = ''; applySearch() }
 
 function onPageChange(p: number) { if (p < 1 || (totalPages.value && p > totalPages.value)) return; page.value = p; syncQuery(); refresh() }
@@ -36,7 +36,7 @@ function onSizeChange(s: number) { size.value = Math.max(1, s); page.value = 1; 
 
 useHead({
   title: () => `热门阵容 - ${ver.value || '未选版本'} - 金铲铲逸尘`,
-  meta: [{ name: 'description', content: '按版本浏览热门阵容，支持搜索与一键复制导入。' }]
+  meta: [{ name: 'description', content: '金铲铲之战热门阵容，支持搜索与一键复制阵容码' }]
 })
 </script>
 
@@ -44,7 +44,8 @@ useHead({
   <div class="page">
     <h1 class="page-title">热门阵容</h1>
     <form class="search" @submit.prevent="applySearch">
-      <input v-model.trim="searchInput" type="search" placeholder="搜索阵容名称/关键词…" @keydown.enter.prevent="applySearch" />
+      <input v-model.trim="searchInput" type="search" placeholder="搜索阵容名称/英雄/羁绊..."
+        @keydown.enter.prevent="applySearch" />
       <button type="button" class="btn ghost" @click="clearSearch" v-if="searchInput">清空</button>
       <button type="submit" class="btn primary">搜索</button>
     </form>
@@ -57,7 +58,7 @@ useHead({
         <div class="error">加载失败：{{ lError.message || '请稍后重试' }}</div>
       </template>
       <template v-else>
-        <LineupCard v-for="it in items" :key="it.id" :name="it.name" :formation-image="it.formation_image"
+        <LineupCard v-for="it in items" :key="it.id" :name="it.name" :formation-image="it.lineup_image"
           :rating="it.rating" :difficulty="it.difficulty" :version="it.version" :code="it.code">
           <template #stats>
             <div v-if="it.stats">
@@ -72,7 +73,7 @@ useHead({
       </template>
     </section>
 
-    <!-- 仅保留底部分页 -->
+    <!-- 底部分页 -->
     <Pagination :page="page" :size="size" :total="total" :total-pages="totalPages" :size-options="[6, 9, 12, 15]"
       @update:page="onPageChange" @update:size="onSizeChange" />
   </div>
