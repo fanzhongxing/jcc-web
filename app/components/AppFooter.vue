@@ -66,14 +66,14 @@ const props = withDefaults(defineProps<{
 }>(), {
   siteName: '金铲铲逸尘',
   slogan: '专属你的铲铲游戏世界，精彩内容等你探索！',
-  icp: '',
+  icp: '粤ICP备2021005069号-1',
   icpLink: 'https://beian.miit.gov.cn/',
   nav: () => ([
     {
       title: '产品',
       items: [
         { label: '优优择', to: 'http://www.youyouze.com' },
-        { label: 'my blog', to: 'http://star.necc.xyz' }
+        { label: '逸尘blog', to: 'http://star.necc.xyz' }
       ]
     },
     {
@@ -85,8 +85,8 @@ const props = withDefaults(defineProps<{
     }
   ]),
   socials: () => ([
-    { label: '抖音', href: 'https://douyin.com/', icon: 'douyin.png' },
-    { label: 'B站', href: 'https://www.bilibili.com/', icon: 'blibli.png' }
+    { label: '抖音', href: 'https://www.douyin.com/user/MS4wLjABAAAA77VM1AnQqXnud0JVV08VDF53REhvyTgbhPjhHLiW1_0JEw4VxHr-gc5B3wmRDRnO?from_tab_name=main', icon: 'douyin.png' },
+    { label: 'B站', href: 'https://space.bilibili.com/388858958?spm_id_from=333.1007.0.0', icon: 'blibli.png' }
   ])
 })
 
