@@ -21,18 +21,18 @@ watch(() => route.query, (qq) => {
 })
 
 // 拉数据（按 season + 分页 + 搜索）
-const { items, total, totalPages, error: lError, status: lStatus, refresh } =
+const { items, total, totalPages, error: lError, status: lStatus } =
   useLineups(season, page, size, q)
 
 // 搜索（提交后写回 URL，触发刷新）
 function syncQuery() {
   router.replace({ query: { ...route.query, season: season.value, page: String(page.value), size: String(size.value), q: q.value || undefined } })
 }
-function applySearch() { q.value = searchInput.value; page.value = 1; syncQuery(); refresh() }
+function applySearch() { q.value = searchInput.value; page.value = 1; syncQuery() }
 function clearSearch() { searchInput.value = ''; applySearch() }
 
-function onPageChange(p: number) { if (p < 1 || (totalPages.value && p > totalPages.value)) return; page.value = p; syncQuery(); refresh() }
-function onSizeChange(s: number) { size.value = Math.max(1, s); page.value = 1; syncQuery(); refresh() }
+function onPageChange(p: number) { if (p < 1 || (totalPages.value && p > totalPages.value)) return; page.value = p; syncQuery() }
+function onSizeChange(s: number) { size.value = Math.max(1, s); page.value = 1; syncQuery() }
 
 useHead({
   title: () => `热门阵容 - ${season.value || '未选版本'} - 金铲铲逸尘`,
