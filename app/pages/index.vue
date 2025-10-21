@@ -6,27 +6,27 @@ import { useLineups } from '~/composables/useLineups'
 const route = useRoute()
 const router = useRouter()
 
-// 从 URL 读取 ver / page / size / q
-const ver = ref<string>(String(route.query.ver || ''))
+// 从 URL 读取 season / page / size / q
+const season = ref<string>(String(route.query.season || ''))
 const page = ref(Math.max(1, Number(route.query.page ?? 1)))
 const size = ref(Math.max(1, Number(route.query.size ?? 9)))
 const q = ref<string>(String(route.query.anme || ''))
 const searchInput = ref<string>(q.value)
 
 watch(() => route.query, (qq) => {
-  if ('ver' in qq) ver.value = String(qq.ver || '')
+  if ('season' in qq) season.value = String(qq.season || '')
   if ('page' in qq) page.value = Math.max(1, Number(qq.page))
   if ('size' in qq) size.value = Math.max(1, Number(qq.size))
   if ('q' in qq) { q.value = String(qq.q || ''); searchInput.value = q.value }
 })
 
-// 拉数据（按 ver + 分页 + 搜索）
+// 拉数据（按 season + 分页 + 搜索）
 const { items, total, totalPages, error: lError, status: lStatus, refresh } =
-  useLineups(ver, page, size, q)
+  useLineups(season, page, size, q)
 
 // 搜索（提交后写回 URL，触发刷新）
 function syncQuery() {
-  router.replace({ query: { ...route.query, ver: ver.value, page: String(page.value), size: String(size.value), q: q.value || undefined } })
+  router.replace({ query: { ...route.query, season: season.value, page: String(page.value), size: String(size.value), q: q.value || undefined } })
 }
 function applySearch() { q.value = searchInput.value; page.value = 1; syncQuery(); refresh() }
 function clearSearch() { searchInput.value = ''; applySearch() }
@@ -35,7 +35,7 @@ function onPageChange(p: number) { if (p < 1 || (totalPages.value && p > totalPa
 function onSizeChange(s: number) { size.value = Math.max(1, s); page.value = 1; syncQuery(); refresh() }
 
 useHead({
-  title: () => `热门阵容 - ${ver.value || '未选版本'} - 金铲铲逸尘`,
+  title: () => `热门阵容 - ${season.value || '未选版本'} - 金铲铲逸尘`,
   meta: [{ name: 'description', content: '金铲铲之战热门阵容，支持搜索与一键复制阵容码' }]
 })
 </script>

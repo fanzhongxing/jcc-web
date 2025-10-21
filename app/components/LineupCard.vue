@@ -57,7 +57,7 @@ async function copyCode() {
 <style scoped>
 .card {
   border-radius: 12px;
-  background: #fff;
+  background: #E4F5F0;
   border: 1px solid #e2e8f0;
   box-shadow: 0 4px 20px rgba(0, 0, 0, .04);
   overflow: hidden;
@@ -154,7 +154,7 @@ async function copyCode() {
   align-items: center;
   gap: 12px;
   padding: 12px 16px 16px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid #2fd1a3;
 }
 
 .btn {

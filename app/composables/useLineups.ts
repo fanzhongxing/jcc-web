@@ -9,7 +9,7 @@ type RawList = { list: Lineup[]; total: number }
 type ListResp = { items: Lineup[]; total: number; page: number; size: number; totalPages: number }
 
 export function useLineups(
-  versionCode: Ref<string>,
+  season: Ref<string>,
   page: Ref<number>,
   size: Ref<number>,
   q: Ref<string>,  // 搜索关键字                   
@@ -17,11 +17,11 @@ export function useLineups(
 ) {
   const api = useHttp()
   const { data, error, status, refresh } = useAsyncData(
-    () => `lineups:${versionCode.value}:${page.value}:${size.value}:${q.value || ''}`,
+    () => `lineups:${season.value}:${page.value}:${size.value}:${q.value || ''}`,
     async () => {
       const payload = await api<RawList>('/api/lineup/list', {
         params: {
-          // version: versionCode.value,
+          season: season.value,
           page: page.value,
           size: size.value,
           q: q.value || ""  // 搜索关键字        
@@ -34,7 +34,7 @@ export function useLineups(
         totalPages: Math.max(1, Math.ceil(total / size.value))
       } as ListResp
     },
-    { server: opts?.server ?? false, watch: [versionCode, page, size, q], immediate: true }
+    { server: opts?.server ?? false, watch: [season, page, size, q], immediate: true }
   )
 
   const items = computed(() => data.value?.items ?? [])
