@@ -8,7 +8,16 @@
 
     <header class="title">{{ name }}</header>
 
-    <p v-if="description" class="description">{{ description }}</p>
+    <section v-if="description" class="description" :class="{ expanded }">
+      <header class="description-header">
+        <h3 class="description-title">核心思路</h3>
+        <button v-if="showToggle" type="button" class="description-toggle" @click="toggleDescription">
+          {{ expanded ? '收起' : '展开' }}
+        </button>
+      </header>
+      <p ref="descriptionBody" class="description-body">{{ description }}</p>
+      <div v-if="showToggle && !expanded" class="fade" aria-hidden="true"></div>
+    </section>
 
     <ul class="meta">
       <li><span class="label">版本</span><span class="val">{{ version }}</span></li>
@@ -41,6 +50,38 @@ const props = defineProps<{
 }>()
 
 const copied = ref(false)
+const expanded = ref(false)
+const showToggle = ref(false)
+const descriptionBody = ref<HTMLElement | null>(null)
+
+const updateOverflow = () => {
+  const el = descriptionBody.value
+  if (!el) return
+  const tolerance = 1
+  const hasOverflow = el.scrollHeight - el.clientHeight > tolerance
+  showToggle.value = expanded.value || hasOverflow
+}
+
+onMounted(() => {
+  nextTick(updateOverflow)
+})
+
+watch(() => props.description, () => {
+  expanded.value = false
+  nextTick(updateOverflow)
+})
+
+if (process.client) {
+  useEventListener(window, 'resize', () => {
+    nextTick(updateOverflow)
+  })
+}
+
+function toggleDescription() {
+  expanded.value = !expanded.value
+  nextTick(updateOverflow)
+}
+
 async function copyCode() {
   try {
     await navigator.clipboard.writeText(props.code)
@@ -77,7 +118,7 @@ async function copyCode() {
 
 .thumb {
   position: relative;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #312e81 100%);
+  background: linear-gradient(135deg, #e4f5f0 0%, #f1f5fb 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -111,15 +152,68 @@ async function copyCode() {
 }
 
 .description {
-  padding: 0 20px;
-  margin: 2px 0 10px;
+  position: relative;
+  padding: 0 20px 10px;
+  margin: 6px 0 4px;
   color: #475569;
   font-size: 14px;
-  line-height: 1.5;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  line-height: 1.6;
+}
+
+.description-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.description-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.description-toggle {
+  border: 0;
+  background: transparent;
+  color: #2563eb;
+  font-size: 13px;
+  cursor: pointer;
+  font-weight: 600;
+  padding: 4px 6px;
+  border-radius: 6px;
+  transition: background .2s ease, color .2s ease;
+}
+
+.description-toggle:hover {
+  background: rgba(37, 99, 235, .08);
+  color: #1d4ed8;
+}
+
+.description-body {
+  margin: 0;
+  max-height: 68px;
   overflow: hidden;
+  transition: max-height .25s ease;
+}
+
+.description.expanded .description-body {
+  max-height: none;
+}
+
+.description .fade {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  bottom: 10px;
+  height: 36px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #f8fbff 70%);
+  pointer-events: none;
+}
+
+.description.expanded .fade {
+  display: none;
 }
 
 .meta {
