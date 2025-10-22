@@ -8,6 +8,8 @@
 
     <header class="title">{{ name }}</header>
 
+    <p v-if="description" class="description">{{ description }}</p>
+
     <ul class="meta">
       <li><span class="label">版本</span><span class="val">{{ version }}</span></li>
       <li><span class="label">上手</span><span class="val">{{ difficulty }}</span></li>
@@ -35,6 +37,7 @@ const props = defineProps<{
   difficulty: string
   version: string
   code: string
+  description?: string
 }>()
 
 const copied = ref(false)
@@ -56,10 +59,10 @@ async function copyCode() {
 
 <style scoped>
 .card {
-  border-radius: 12px;
-  background: #E4F5F0;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, .04);
+  border-radius: 18px;
+  background: linear-gradient(145deg, #f8fbff 0%, #f1f5f9 100%);
+  border: 1px solid rgba(148, 163, 184, .3);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, .08);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -67,19 +70,19 @@ async function copyCode() {
 }
 
 .card:hover {
-  border-color: #93c5fd;
-  box-shadow: 0 8px 28px rgba(2, 132, 199, .12);
-  transform: translateY(-1px);
+  border-color: #60a5fa;
+  box-shadow: 0 18px 36px rgba(37, 99, 235, .15);
+  transform: translateY(-3px);
 }
 
 .thumb {
   position: relative;
-  background: #f8fafc;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #312e81 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 120px;
-  border-bottom: 1px solid #f1f5f9;
+  min-height: 148px;
+  border-bottom: 1px solid rgba(148, 163, 184, .35);
 }
 
 .thumb img {
@@ -102,15 +105,28 @@ async function copyCode() {
 
 .title {
   font-weight: 700;
-  font-size: 18px;
-  padding: 14px 16px 0;
+  font-size: 19px;
+  padding: 18px 20px 4px;
+  color: #0f172a;
+}
+
+.description {
+  padding: 0 20px;
+  margin: 2px 0 10px;
+  color: #475569;
+  font-size: 14px;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .meta {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
-  padding: 8px 16px 0 16px;
+  padding: 6px 20px 2px 20px;
   margin: 0 0 8px;
   list-style: none;
 }
@@ -125,15 +141,15 @@ async function copyCode() {
 }
 
 .stats-wrap {
-  padding: 4px 16px 12px 16px;
+  padding: 4px 20px 16px 20px;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
 }
 
 .stats-wrap .stat {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: rgba(241, 245, 249, .75);
+  border: 1px solid rgba(148, 163, 184, .3);
   border-radius: 8px;
   padding: 8px 10px;
   display: flex;
@@ -153,25 +169,28 @@ async function copyCode() {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 16px 16px;
-  border-top: 1px solid #2fd1a3;
+  padding: 14px 20px 20px;
+  border-top: 1px solid rgba(148, 163, 184, .25);
 }
 
 .btn {
   border: 0;
-  padding: 8px 14px;
-  border-radius: 8px;
-  background: #3b82f6;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: linear-gradient(120deg, #3b82f6, #2563eb);
   color: #fff;
+  font-weight: 600;
   cursor: pointer;
+  transition: transform .2s ease, box-shadow .2s ease;
 }
 
 .btn:hover {
-  filter: brightness(1.05);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 18px rgba(59, 130, 246, .25);
 }
 
 .btn:disabled {
-  background: #16a34a;
+  background: linear-gradient(120deg, #22c55e, #16a34a);
   cursor: default;
 }
 </style>
