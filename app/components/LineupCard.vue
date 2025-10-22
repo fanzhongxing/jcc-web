@@ -11,6 +11,7 @@
       <ul class="meta">
         <li><span class="label">版本</span><span class="val">{{ version }}</span></li>
         <li><span class="label">上手</span><span class="val">{{ difficulty }}</span></li>
+        <li><span class="label">评级</span><span class="val">{{ rating }}</span></li>
       </ul>
     </header>
 
