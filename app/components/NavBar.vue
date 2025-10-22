@@ -68,11 +68,19 @@ watchEffect(() => {
   }
 })
 
-/** 下拉切换赛季：写回 URL（保留其他 query，比如搜索词），并回到第1页 */
+const DEFAULT_PAGE = '1'
+const DEFAULT_SIZE = '9'
+
+/** 下拉切换赛季：写回 URL（保留其他 query，比如搜索词），并回到第1页且重置分页大小 */
 function onSeasonChange(next: string) {
   if (!next || next === season.value) return
   season.value = next
-  router.push({ query: { ...route.query, season: season.value } })
+  const query = { ...route.query, season: season.value }
+
+  if ('page' in query) query.page = DEFAULT_PAGE
+  if ('size' in query) query.size = DEFAULT_SIZE
+
+  router.push({ query })
 }
 
 /* -------------------- B：根据赛季计算导航条目 -------------------- */
