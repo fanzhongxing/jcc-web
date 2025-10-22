@@ -98,18 +98,58 @@ function toggleDescription() {
 }
 
 async function copyCode() {
-  try {
-    await navigator.clipboard.writeText(props.code)
-  } catch {
+  if (!isClient) return
+
+  const doFallbackCopy = () => {
     const ta = document.createElement('textarea')
     ta.value = props.code
+    ta.setAttribute('readonly', '')
+    ta.style.position = 'absolute'
+    ta.style.left = '-9999px'
     document.body.appendChild(ta)
+
+    const selection = document.getSelection()
+    const selectedRange = selection && selection.rangeCount > 0 ? selection.getRangeAt(0) : null
+
     ta.select()
-    await navigator.clipboard.writeText('copy');
+
+    let ok = false
+    try {
+      ok = document.execCommand('copy')
+    } catch (err) {
+      ok = false
+    }
+
+    if (selectedRange && selection) {
+      selection.removeAllRanges()
+      selection.addRange(selectedRange)
+    }
+
     document.body.removeChild(ta)
+
+    return ok
   }
-  copied.value = true
-  setTimeout(() => (copied.value = false), 1800)
+
+  const clipboard =
+    typeof navigator !== 'undefined' && 'clipboard' in navigator ? navigator.clipboard : undefined
+
+  const tryClipboardApi = async () => {
+    if (!clipboard || typeof clipboard.writeText !== 'function') return false
+
+    try {
+      await clipboard.writeText(props.code)
+      return true
+    } catch (err) {
+      return false
+    }
+  }
+
+  const copiedSuccessfully = (await tryClipboardApi()) || doFallbackCopy()
+
+  if (copiedSuccessfully) {
+    copied.value = true
+    setTimeout(() => (copied.value = false), 1800)
+  }
 }
 </script>
 
