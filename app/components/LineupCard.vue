@@ -6,13 +6,24 @@
       <!-- <div v-if="version" class="badge">{{ version }}</div> -->
     </div>
 
-    <header class="title">{{ name }}</header>
+    <header class="heading">
+      <h2 class="title">{{ name }}</h2>
+      <ul class="meta">
+        <li><span class="label">版本</span><span class="val">{{ version }}</span></li>
+        <li><span class="label">上手</span><span class="val">{{ difficulty }}</span></li>
+      </ul>
+    </header>
 
-    <ul class="meta">
-      <li><span class="label">版本</span><span class="val">{{ version }}</span></li>
-      <li><span class="label">上手</span><span class="val">{{ difficulty }}</span></li>
-      <!-- <li><span class="label">评级</span><span class="val">{{ rating }}</span></li> -->
-    </ul>
+    <section v-if="descriptionText" class="description" :class="{ expanded }">
+      <header class="description-header">
+        <h3 class="description-title">核心思路</h3>
+        <button v-if="showToggle" type="button" class="description-toggle" @click="toggleDescription">
+          {{ expanded ? '收起' : '展开' }}
+        </button>
+      </header>
+      <p ref="descriptionBody" class="description-body">{{ descriptionText }}</p>
+      <div v-if="showToggle && !expanded" class="fade" aria-hidden="true"></div>
+    </section>
 
     <!-- 可选统计区 -->
     <div v-if="$slots.stats" class="stats-wrap">
@@ -35,9 +46,56 @@ const props = defineProps<{
   difficulty: string
   version: string
   code: string
+  description?: string
 }>()
 
 const copied = ref(false)
+const expanded = ref(false)
+const showToggle = ref(false)
+const descriptionBody = ref<HTMLElement | null>(null)
+
+const DEFAULT_DESCRIPTION = '核心思路暂未提供，敬请期待更新。'
+
+const descriptionText = computed(() => props.description?.trim() || DEFAULT_DESCRIPTION)
+
+const isClient = import.meta.client
+
+const updateOverflow = () => {
+  const el = descriptionBody.value
+  if (!el) return
+  const tolerance = 1
+  const hasOverflow = el.scrollHeight - el.clientHeight > tolerance
+  showToggle.value = expanded.value || hasOverflow
+}
+
+const onResize = () => {
+  nextTick(updateOverflow)
+}
+
+onMounted(() => {
+  nextTick(updateOverflow)
+
+  if (isClient) {
+    window.addEventListener('resize', onResize)
+  }
+})
+
+onBeforeUnmount(() => {
+  if (isClient) {
+    window.removeEventListener('resize', onResize)
+  }
+})
+
+watch(descriptionText, () => {
+  expanded.value = false
+  nextTick(updateOverflow)
+})
+
+function toggleDescription() {
+  expanded.value = !expanded.value
+  nextTick(updateOverflow)
+}
+
 async function copyCode() {
   try {
     await navigator.clipboard.writeText(props.code)
@@ -56,10 +114,10 @@ async function copyCode() {
 
 <style scoped>
 .card {
-  border-radius: 12px;
-  background: #E4F5F0;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, .04);
+  border-radius: 18px;
+  background: linear-gradient(145deg, #f8fbff 0%, #f1f5f9 100%);
+  border: 1px solid rgba(148, 163, 184, .3);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, .08);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -67,19 +125,19 @@ async function copyCode() {
 }
 
 .card:hover {
-  border-color: #93c5fd;
-  box-shadow: 0 8px 28px rgba(2, 132, 199, .12);
-  transform: translateY(-1px);
+  border-color: #60a5fa;
+  box-shadow: 0 18px 36px rgba(37, 99, 235, .15);
+  transform: translateY(-3px);
 }
 
 .thumb {
   position: relative;
-  background: #f8fafc;
+  background: linear-gradient(135deg, #e4f5f0 0%, #f1f5fb 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 120px;
-  border-bottom: 1px solid #f1f5f9;
+  min-height: 136px;
+  border-bottom: 1px solid rgba(148, 163, 184, .35);
 }
 
 .thumb img {
@@ -100,40 +158,126 @@ async function copyCode() {
   font-size: 12px;
 }
 
+.heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 10px 16px;
+  padding: 16px 20px 6px;
+}
+
 .title {
+  margin: 0;
   font-weight: 700;
   font-size: 18px;
-  padding: 14px 16px 0;
+  color: #0f172a;
+  flex: 1 1 180px;
+}
+
+.description {
+  position: relative;
+  padding: 0 20px 8px;
+  margin: 4px 0 2px;
+  color: #475569;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.description-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.description-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.description-toggle {
+  border: 0;
+  background: transparent;
+  color: #2563eb;
+  font-size: 13px;
+  cursor: pointer;
+  font-weight: 600;
+  padding: 4px 6px;
+  border-radius: 6px;
+  transition: background .2s ease, color .2s ease;
+}
+
+.description-toggle:hover {
+  background: rgba(37, 99, 235, .08);
+  color: #1d4ed8;
+}
+
+.description-body {
+  margin: 0;
+  max-height: 60px;
+  overflow: hidden;
+  transition: max-height .25s ease;
+}
+
+.description.expanded .description-body {
+  max-height: none;
+}
+
+.description .fade {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  bottom: 8px;
+  height: 30px;
+  background: linear-gradient(180deg, rgba(248, 251, 255, 0) 0%, #f8fbff 75%);
+  pointer-events: none;
+}
+
+.description.expanded .fade {
+  display: none;
 }
 
 .meta {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   flex-wrap: wrap;
-  padding: 8px 16px 0 16px;
-  margin: 0 0 8px;
   list-style: none;
+  margin: 2px 0 0;
+  padding: 0;
+}
+
+.meta li {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, .15);
+  font-size: 12px;
+  color: #475569;
 }
 
 .meta .label {
-  color: #64748b;
-  margin-right: 6px;
+  color: inherit;
 }
 
 .meta .val {
   font-weight: 600;
+  color: #0f172a;
 }
 
 .stats-wrap {
-  padding: 4px 16px 12px 16px;
+  padding: 4px 20px 14px 20px;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
 }
 
 .stats-wrap .stat {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: rgba(241, 245, 249, .75);
+  border: 1px solid rgba(148, 163, 184, .3);
   border-radius: 8px;
   padding: 8px 10px;
   display: flex;
@@ -153,25 +297,28 @@ async function copyCode() {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 16px 16px;
-  border-top: 1px solid #2fd1a3;
+  padding: 12px 20px 18px;
+  border-top: 1px solid rgba(148, 163, 184, .25);
 }
 
 .btn {
   border: 0;
-  padding: 8px 14px;
-  border-radius: 8px;
-  background: #3b82f6;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: linear-gradient(120deg, #3b82f6, #2563eb);
   color: #fff;
+  font-weight: 600;
   cursor: pointer;
+  transition: transform .2s ease, box-shadow .2s ease;
 }
 
 .btn:hover {
-  filter: brightness(1.05);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 18px rgba(59, 130, 246, .25);
 }
 
 .btn:disabled {
-  background: #16a34a;
+  background: linear-gradient(120deg, #22c55e, #16a34a);
   cursor: default;
 }
 </style>
