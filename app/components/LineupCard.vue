@@ -171,6 +171,7 @@ async function copyCode() {
   margin: 0;
   font-weight: 700;
   font-size: 18px;
+  line-height: 1.2;
   color: #0f172a;
   flex: 1 1 180px;
 }
@@ -181,7 +182,7 @@ async function copyCode() {
   margin: 4px 0 2px;
   color: #475569;
   font-size: 14px;
-  line-height: 1.6;
+  line-height: 1.45;
 }
 
 .description-header {
@@ -195,6 +196,7 @@ async function copyCode() {
 .description-title {
   font-size: 14px;
   font-weight: 700;
+  line-height: 1.2;
   color: #0f172a;
 }
 
@@ -203,6 +205,7 @@ async function copyCode() {
   background: transparent;
   color: #2563eb;
   font-size: 13px;
+  line-height: 1.2;
   cursor: pointer;
   font-weight: 600;
   padding: 4px 6px;
@@ -217,7 +220,8 @@ async function copyCode() {
 
 .description-body {
   margin: 0;
-  max-height: 60px;
+  max-height: 52px;
+  line-height: 1.45;
   overflow: hidden;
   transition: max-height .25s ease;
 }
@@ -231,7 +235,7 @@ async function copyCode() {
   left: 20px;
   right: 20px;
   bottom: 8px;
-  height: 30px;
+  height: 24px;
   background: linear-gradient(180deg, rgba(248, 251, 255, 0) 0%, #f8fbff 75%);
   pointer-events: none;
 }
@@ -257,6 +261,7 @@ async function copyCode() {
   border-radius: 999px;
   background: rgba(148, 163, 184, .15);
   font-size: 12px;
+  line-height: 1.2;
   color: #475569;
 }
 
@@ -297,29 +302,37 @@ async function copyCode() {
 .actions {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 20px 18px;
+  justify-content: flex-end;
+  padding: 10px 20px 14px;
   border-top: 1px solid rgba(148, 163, 184, .25);
 }
 
 .btn {
-  border: 0;
-  padding: 8px 16px;
-  border-radius: 999px;
-  background: linear-gradient(120deg, #3b82f6, #2563eb);
-  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(37, 99, 235, .45);
+  background: rgba(37, 99, 235, .08);
+  color: #1d4ed8;
   font-weight: 600;
+  font-size: 13px;
+  line-height: 1.2;
   cursor: pointer;
-  transition: transform .2s ease, box-shadow .2s ease;
+  transition: background .2s ease, border-color .2s ease, color .2s ease;
 }
 
 .btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 18px rgba(59, 130, 246, .25);
+  background: rgba(37, 99, 235, .14);
+  border-color: rgba(37, 99, 235, .65);
+  color: #1e40af;
 }
 
 .btn:disabled {
-  background: linear-gradient(120deg, #22c55e, #16a34a);
+  background: rgba(34, 197, 94, .12);
+  border-color: rgba(34, 197, 94, .45);
+  color: #15803d;
   cursor: default;
 }
 </style>
