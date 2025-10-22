@@ -8,14 +8,14 @@
 
     <header class="title">{{ name }}</header>
 
-    <section v-if="description" class="description" :class="{ expanded }">
+    <section v-if="descriptionText" class="description" :class="{ expanded }">
       <header class="description-header">
         <h3 class="description-title">核心思路</h3>
         <button v-if="showToggle" type="button" class="description-toggle" @click="toggleDescription">
           {{ expanded ? '收起' : '展开' }}
         </button>
       </header>
-      <p ref="descriptionBody" class="description-body">{{ description }}</p>
+      <p ref="descriptionBody" class="description-body">{{ descriptionText }}</p>
       <div v-if="showToggle && !expanded" class="fade" aria-hidden="true"></div>
     </section>
 
@@ -54,6 +54,12 @@ const expanded = ref(false)
 const showToggle = ref(false)
 const descriptionBody = ref<HTMLElement | null>(null)
 
+const DEFAULT_DESCRIPTION = '核心思路暂未提供，敬请期待更新。'
+
+const descriptionText = computed(() => props.description?.trim() || DEFAULT_DESCRIPTION)
+
+const isClient = import.meta.client
+
 const updateOverflow = () => {
   const el = descriptionBody.value
   if (!el) return
@@ -62,20 +68,28 @@ const updateOverflow = () => {
   showToggle.value = expanded.value || hasOverflow
 }
 
+const onResize = () => {
+  nextTick(updateOverflow)
+}
+
 onMounted(() => {
   nextTick(updateOverflow)
+
+  if (isClient) {
+    window.addEventListener('resize', onResize)
+  }
 })
 
-watch(() => props.description, () => {
+onBeforeUnmount(() => {
+  if (isClient) {
+    window.removeEventListener('resize', onResize)
+  }
+})
+
+watch(descriptionText, () => {
   expanded.value = false
   nextTick(updateOverflow)
 })
-
-if (process.client) {
-  useEventListener(window, 'resize', () => {
-    nextTick(updateOverflow)
-  })
-}
 
 function toggleDescription() {
   expanded.value = !expanded.value
