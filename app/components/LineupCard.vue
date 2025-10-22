@@ -6,7 +6,13 @@
       <!-- <div v-if="version" class="badge">{{ version }}</div> -->
     </div>
 
-    <header class="title">{{ name }}</header>
+    <header class="heading">
+      <h2 class="title">{{ name }}</h2>
+      <ul class="meta">
+        <li><span class="label">版本</span><span class="val">{{ version }}</span></li>
+        <li><span class="label">上手</span><span class="val">{{ difficulty }}</span></li>
+      </ul>
+    </header>
 
     <section v-if="descriptionText" class="description" :class="{ expanded }">
       <header class="description-header">
@@ -18,12 +24,6 @@
       <p ref="descriptionBody" class="description-body">{{ descriptionText }}</p>
       <div v-if="showToggle && !expanded" class="fade" aria-hidden="true"></div>
     </section>
-
-    <ul class="meta">
-      <li><span class="label">版本</span><span class="val">{{ version }}</span></li>
-      <li><span class="label">上手</span><span class="val">{{ difficulty }}</span></li>
-      <!-- <li><span class="label">评级</span><span class="val">{{ rating }}</span></li> -->
-    </ul>
 
     <!-- 可选统计区 -->
     <div v-if="$slots.stats" class="stats-wrap">
@@ -136,7 +136,7 @@ async function copyCode() {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 148px;
+  min-height: 136px;
   border-bottom: 1px solid rgba(148, 163, 184, .35);
 }
 
@@ -158,17 +158,26 @@ async function copyCode() {
   font-size: 12px;
 }
 
+.heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 10px 16px;
+  padding: 16px 20px 6px;
+}
+
 .title {
+  margin: 0;
   font-weight: 700;
-  font-size: 19px;
-  padding: 18px 20px 4px;
+  font-size: 18px;
   color: #0f172a;
+  flex: 1 1 180px;
 }
 
 .description {
   position: relative;
-  padding: 0 20px 10px;
-  margin: 6px 0 4px;
+  padding: 0 20px 8px;
+  margin: 4px 0 2px;
   color: #475569;
   font-size: 14px;
   line-height: 1.6;
@@ -179,11 +188,11 @@ async function copyCode() {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .description-title {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   color: #0f172a;
 }
@@ -207,7 +216,7 @@ async function copyCode() {
 
 .description-body {
   margin: 0;
-  max-height: 68px;
+  max-height: 60px;
   overflow: hidden;
   transition: max-height .25s ease;
 }
@@ -220,9 +229,9 @@ async function copyCode() {
   position: absolute;
   left: 20px;
   right: 20px;
-  bottom: 10px;
-  height: 36px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #f8fbff 70%);
+  bottom: 8px;
+  height: 30px;
+  background: linear-gradient(180deg, rgba(248, 251, 255, 0) 0%, #f8fbff 75%);
   pointer-events: none;
 }
 
@@ -232,24 +241,35 @@ async function copyCode() {
 
 .meta {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   flex-wrap: wrap;
-  padding: 6px 20px 2px 20px;
-  margin: 0 0 8px;
   list-style: none;
+  margin: 2px 0 0;
+  padding: 0;
+}
+
+.meta li {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, .15);
+  font-size: 12px;
+  color: #475569;
 }
 
 .meta .label {
-  color: #64748b;
-  margin-right: 6px;
+  color: inherit;
 }
 
 .meta .val {
   font-weight: 600;
+  color: #0f172a;
 }
 
 .stats-wrap {
-  padding: 4px 20px 16px 20px;
+  padding: 4px 20px 14px 20px;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
@@ -277,7 +297,7 @@ async function copyCode() {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 14px 20px 20px;
+  padding: 12px 20px 18px;
   border-top: 1px solid rgba(148, 163, 184, .25);
 }
 
