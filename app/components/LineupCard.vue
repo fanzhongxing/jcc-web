@@ -129,25 +129,25 @@ async function copyCode() {
     return ok
   }
 
-  try {
-    const canUseClipboardApi =
-      typeof navigator !== 'undefined' &&
-      typeof navigator.clipboard !== 'undefined' &&
-      typeof navigator.clipboard.writeText === 'function'
+  const clipboard =
+    typeof navigator !== 'undefined' && 'clipboard' in navigator ? navigator.clipboard : undefined
 
-    const copiedSuccessfully = canUseClipboardApi
-      ? await navigator.clipboard.writeText(props.code).then(() => true)
-      : doFallbackCopy()
+  const tryClipboardApi = async () => {
+    if (!clipboard || typeof clipboard.writeText !== 'function') return false
 
-    if (copiedSuccessfully) {
-      copied.value = true
-      setTimeout(() => (copied.value = false), 1800)
+    try {
+      await clipboard.writeText(props.code)
+      return true
+    } catch (err) {
+      return false
     }
-  } catch (error) {
-    if (doFallbackCopy()) {
-      copied.value = true
-      setTimeout(() => (copied.value = false), 1800)
-    }
+  }
+
+  const copiedSuccessfully = (await tryClipboardApi()) || doFallbackCopy()
+
+  if (copiedSuccessfully) {
+    copied.value = true
+    setTimeout(() => (copied.value = false), 1800)
   }
 }
 </script>
