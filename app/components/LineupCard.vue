@@ -301,29 +301,37 @@ async function copyCode() {
 .actions {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 20px 18px;
+  justify-content: flex-end;
+  padding: 10px 20px 14px;
   border-top: 1px solid rgba(148, 163, 184, .25);
 }
 
 .btn {
-  border: 0;
-  padding: 8px 16px;
-  border-radius: 999px;
-  background: linear-gradient(120deg, #3b82f6, #2563eb);
-  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(37, 99, 235, .45);
+  background: rgba(37, 99, 235, .08);
+  color: #1d4ed8;
   font-weight: 600;
+  font-size: 13px;
+  line-height: 1.2;
   cursor: pointer;
-  transition: transform .2s ease, box-shadow .2s ease;
+  transition: background .2s ease, border-color .2s ease, color .2s ease;
 }
 
 .btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 18px rgba(59, 130, 246, .25);
+  background: rgba(37, 99, 235, .14);
+  border-color: rgba(37, 99, 235, .65);
+  color: #1e40af;
 }
 
 .btn:disabled {
-  background: linear-gradient(120deg, #22c55e, #16a34a);
+  background: rgba(34, 197, 94, .12);
+  border-color: rgba(34, 197, 94, .45);
+  color: #15803d;
   cursor: default;
 }
 </style>
