@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import Pagination from '~/components/Pagination.vue'
 import LineupCard from '~/components/LineupCard.vue'
+import { computed } from 'vue'
 import { useLineups } from '~/composables/useLineups'
+import { useSeasons } from '~/composables/useSeasons'
+import { DEFAULT_SEASON_THEME, SEASON_THEMES } from '~/data/seasonThemes'
 
 const route = useRoute()
 const router = useRouter()
@@ -24,6 +27,23 @@ watch(() => route.query, (qq) => {
 const { items, total, totalPages, error: lError, status: lStatus } =
   useLineups(season, page, size, q)
 
+// 赛季主题展示
+const { items: seasons } = useSeasons({ server: false })
+const activeSeason = computed(() => seasons.value.find((item) => item.name === season.value))
+const activeTheme = computed(() => SEASON_THEMES[season.value] || DEFAULT_SEASON_THEME)
+const heroBackground = computed(() => {
+  const theme = activeTheme.value
+  const gradients = []
+  if (theme.gradientFrom && theme.gradientTo) {
+    gradients.push(`linear-gradient(135deg, ${theme.gradientFrom}, ${theme.gradientTo})`)
+  }
+  if (theme.poster) {
+    gradients.push(`url(${theme.poster})`)
+  }
+  return gradients.join(', ')
+})
+const heroDescription = computed(() => activeTheme.value.description || activeSeason.value?.introduce || '')
+
 // 搜索（提交后写回 URL，触发刷新）
 function syncQuery() {
   router.replace({ query: { ...route.query, season: season.value, page: String(page.value), size: String(size.value), q: q.value || undefined } })
@@ -43,6 +63,13 @@ useHead({
 <template>
   <div class="page">
     <h1 class="page-title">热门阵容</h1>
+    <section class="season-hero" :style="{ backgroundImage: heroBackground }">
+      <div class="season-hero__content">
+        <span class="season-hero__badge">{{ season || '未选择赛季' }}</span>
+        <h2 class="season-hero__title">{{ activeTheme.title || activeSeason?.introduce || '赛季主题' }}</h2>
+        <p v-if="heroDescription" class="season-hero__desc">{{ heroDescription }}</p>
+      </div>
+    </section>
     <form class="search" @submit.prevent="applySearch">
       <input v-model.trim="searchInput" type="search" placeholder="搜索阵容名称/英雄/羁绊..."
         @keydown.enter.prevent="applySearch" />
@@ -93,6 +120,59 @@ useHead({
   margin: 12px 0 12px;
 }
 
+.season-hero {
+  position: relative;
+  border-radius: 18px;
+  padding: 28px;
+  margin-bottom: 24px;
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+  min-height: 200px;
+  display: flex;
+  align-items: flex-end;
+  color: #fff;
+}
+
+.season-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(15, 23, 42, 0.2), rgba(15, 23, 42, 0.6));
+}
+
+.season-hero__content {
+  position: relative;
+  z-index: 1;
+  max-width: 520px;
+}
+
+.season-hero__badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.season-hero__title {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.season-hero__desc {
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.9);
+}
+
 .search {
   display: flex;
   gap: 8px;
@@ -137,6 +217,15 @@ useHead({
 @media (max-width:640px) {
   .page {
     padding: 0 16px;
+  }
+
+  .season-hero {
+    padding: 24px 20px;
+    min-height: 180px;
+  }
+
+  .season-hero__title {
+    font-size: 26px;
   }
 
   .grid {
