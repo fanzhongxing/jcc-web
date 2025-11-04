@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600">
+  <defs>
+    <linearGradient id="bg" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#3b82f6" />
+      <stop offset="50%" stop-color="#8b5cf6" />
+      <stop offset="100%" stop-color="#ec4899" />
+    </linearGradient>
+    <radialGradient id="flare" cx="30%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.9)" />
+      <stop offset="100%" stop-color="rgba(255,255,255,0)" />
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="600" fill="url(#bg)" />
+  <circle cx="360" cy="220" r="320" fill="url(#flare)" />
+  <g fill="rgba(255,255,255,0.14)">
+    <path d="M180 520 l120 -180 120 180 z" />
+    <path d="M840 520 l120 -180 120 180 z" />
+    <circle cx="600" cy="180" r="140" />
+  </g>
+  <text x="140" y="160" font-family="'Poppins', 'Noto Sans SC', sans-serif" font-size="72" fill="#fff" font-weight="600">S15 灵能觉醒</text>
+  <text x="140" y="240" font-family="'Poppins', 'Noto Sans SC', sans-serif" font-size="34" fill="rgba(255,255,255,0.85)">
+    灵能奔涌，重构属于你的金铲铲阵容宇宙
+  </text>
+</svg>
